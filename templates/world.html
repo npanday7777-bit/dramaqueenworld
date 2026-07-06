@@ -66,19 +66,14 @@
   </section>
 
   <!-- ============ SONG DEDICATION ============ -->
-  <section class="song-section hidden" id="song-section">
-    <h2>A song for you 🎵</h2>
-    <p class="menu-instructions">This part's got your name on it.</p>
-    <div class="song-embed-box">
-      <!--
-        Paste a YouTube (or other) embed here, for example:
-        <iframe width="100%" height="200" src="https://www.youtube.com/embed/VIDEO_ID"
-                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      -->
-      <p class="song-placeholder">🎶 [Add your song embed in templates/world.html — look for this box] 🎶</p>
-    </div>
-  </section>
-
+ <div class="song-embed-box">
+  {% if song_embed_url %}
+    <iframe width="100%" height="200" src="{{ song_embed_url }}"
+            frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  {% else %}
+    <p class="song-placeholder">🎶 [No song added yet for this person] 🎶</p>
+  {% endif %}
+</div>
   <!-- ============ STICKER CAROUSEL + FINAL ============ -->
   <section class="final-section hidden" id="final-section">
     <h2>I love you. Just... in a different font.</h2>
