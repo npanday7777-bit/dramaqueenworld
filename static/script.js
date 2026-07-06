@@ -13,12 +13,17 @@ function randomFrom(arr) {
 }
 
 function speak(text) {
-  if (!("speechSynthesis" in window)) return;
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.pitch = 1.3;
-  utter.rate = 1.05;
-  window.speechSynthesis.cancel(); // stop any previous line
-  window.speechSynthesis.speak(utter);
+  try {
+    if (!("speechSynthesis" in window)) return;
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.pitch = 1.3;
+    utter.rate = 1.05;
+    window.speechSynthesis.cancel(); // stop any previous line
+    window.speechSynthesis.speak(utter);
+  } catch (err) {
+    // Some phone browsers (in-app browsers especially) don't support this.
+    // Silently skip the voice — it's a bonus, not required for the page to work.
+  }
 }
 
 // ---------- Menu tile clicks ----------
@@ -48,14 +53,26 @@ document.querySelectorAll(".menu-tile").forEach(tile => {
 
 cheerContinue.addEventListener("click", () => {
   cheerModal.classList.add("hidden");
-  window.speechSynthesis.cancel();
+
+  // Some phone browsers (especially in-app browsers like WhatsApp/Instagram)
+  // don't fully support speechSynthesis. Guard this so it can never block
+  // the rest of the reveal below.
+  try {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+  } catch (err) {
+    // ignore — not critical, the reveal must still happen
+  }
 
   // Reveal the rest of the experience
   ["cards-section", "song-section", "final-section"].forEach(id => {
-    document.getElementById(id).classList.remove("hidden");
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("hidden");
   });
 
-  document.getElementById("cards-section").scrollIntoView({ behavior: "smooth" });
+  const cardsSection = document.getElementById("cards-section");
+  if (cardsSection) cardsSection.scrollIntoView({ behavior: "smooth" });
 });
 
 gateClose.addEventListener("click", () => {
