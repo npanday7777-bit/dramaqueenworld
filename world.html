@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drama Queen World — {{ person.display_name }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="floaty">👑</div>
+    <h1>Welcome to<br><span class="drama-title">Drama Queen World</span></h1>
+    <p class="subtitle">A tiny, ridiculous, very sincere kingdom — made just for you.</p>
+    <div class="scroll-hint">↓ scroll to find your name ↓</div>
+  </section>
+
+  <!-- ============ RELATIONSHIP MENU ============ -->
+  <section class="menu-section">
+    <h2>Who are you to me?</h2>
+    <p class="menu-instructions">Click the one that's actually you. (We'll know if it isn't.)</p>
+    <div class="menu-grid">
+      {% for item in menu_items %}
+      <button class="menu-tile" data-slug="{{ item.slug }}">
+        <span class="menu-emoji">{{ item.emoji }}</span>
+        <span class="menu-label">{{ item.display_name }}</span>
+      </button>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ============ CARDS (revealed after unlock) ============ -->
+  <section class="cards-section hidden" id="cards-section">
+    <h2>{{ person.gate_title }}</h2>
+    <div class="cards-grid">
+      {% for card in person.cards %}
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <span class="card-emoji">{{ card.emoji }}</span>
+            <span class="card-title">{{ card.title }}</span>
+          </div>
+          <div class="flip-card-back">
+            {% if card.type == "list" %}
+              <ul class="reason-list">
+                {% for reason in card.content %}
+                <li>{{ reason }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="card-text">{{ card.content }}</p>
+            {% endif %}
+            {% if card.stickers %}
+              <div class="stickers-row">
+                {% for sticker in card.stickers %}
+                <span class="sticker">{{ sticker }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ============ SONG DEDICATION ============ -->
+  <section class="song-section hidden" id="song-section">
+    <h2>A song for you 🎵</h2>
+    <p class="menu-instructions">This part's got your name on it.</p>
+    <div class="song-embed-box">
+      <!--
+        Paste a YouTube (or other) embed here, for example:
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/VIDEO_ID"
+                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      -->
+      <p class="song-placeholder">🎶 [Add your song embed in templates/world.html — look for this box] 🎶</p>
+    </div>
+  </section>
+
+  <!-- ============ STICKER CAROUSEL + FINAL ============ -->
+  <section class="final-section hidden" id="final-section">
+    <h2>I love you. Just... in a different font.</h2>
+    <div class="sticker-carousel">
+      <button id="prev-sticker" class="carousel-btn">‹</button>
+      <div id="sticker-display" class="sticker-display"></div>
+      <button id="next-sticker" class="carousel-btn">›</button>
+    </div>
+    <p class="signature">— your resident drama queen</p>
+  </section>
+
+  <!-- ============ CHEER MODAL ============ -->
+  <div class="modal-overlay hidden" id="cheer-modal">
+    <div class="modal-card cheer-card">
+      <div class="character" id="cheer-character">{{ person.emoji }}</div>
+      <p class="speech-bubble" id="cheer-text"></p>
+      <button class="modal-btn" id="cheer-continue">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ============ GATEKEEPER MODAL ============ -->
+  <div class="modal-overlay hidden" id="gate-modal">
+    <div class="modal-card gate-card">
+      <div class="character">🕵️</div>
+      <p class="speech-bubble" id="gate-text"></p>
+      <button class="modal-btn" id="gate-close">Okay, fine</button>
+    </div>
+  </div>
+
+  <script>
+    // Data injected from the server — only for the person this link belongs to.
+    window.UNLOCKED_SLUG = "{{ unlocked_slug }}";
+    window.CHEER_LINES = {{ person.cheer_lines | tojson }};
+    window.GATE_LINES = {{ gatekeeper_lines | tojson }};
+    window.LOVE_STICKERS = {{ love_stickers | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

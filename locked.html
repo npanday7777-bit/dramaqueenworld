@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drama Queen World</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="locked-body">
+  <div class="locked-card">
+    <div class="locked-emoji">👑</div>
+    <h1>Welcome to Drama Queen World</h1>
+    {% if reason == "invalid" %}
+      <p>Hmm, that link doesn't match anyone in the kingdom. 🕵️</p>
+      <p class="small">Double check the link you were sent — every visitor gets their own personal one.</p>
+    {% else %}
+      <p>This world is invite-only. ✨</p>
+      <p class="small">If someone sent you here, use the personal link they gave you — not this one.</p>
+    {% endif %}
+  </div>
+</body>
+</html>
