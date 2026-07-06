@@ -41,6 +41,7 @@ PEOPLE = {
             "The queen mother approaches, make way!",
         ],
         "gate_title": "Welcome, Billo Rani 👑",
+"song_url": "https://youtu.be/mfNnCKMx-tk",
         "cards": [
             {"title": "Why You Should Buy Me Chocolate", "emoji": "🍫",
              "type": "text", "stickers": CHOCOLATE_STICKERS,
@@ -69,6 +70,8 @@ PEOPLE = {
             "The legend, the myth, the man who always finds a way — Pitashree!",
         ],
         "gate_title": "Welcome, Pitashree 🛡️",
+ "song_url": "https://youtu.be/KhnVcAC5bIM",
+
         "cards": [
             {"title": "Why You Should Buy Me Chocolate", "emoji": "🍫",
              "type": "text", "stickers": CHOCOLATE_STICKERS,
@@ -96,7 +99,8 @@ PEOPLE = {
             "DUGGU ALERT. The house just got ten times louder.",
             "It's the chaos gremlin himself — Duggu has logged in!",
         ],
-        "gate_title": "Welcome, Duggu 🎮",
+       "gate_title": "Welcome, Duggu 🎮",
+"song_url": "https://youtu.be/II2EO3Nw4m0",
         "cards": [
             {"title": "Why You Should Buy Me Chocolate", "emoji": "🍫",
              "type": "text", "stickers": CHOCOLATE_STICKERS,
@@ -124,7 +128,8 @@ PEOPLE = {
             "It's RED! My person, online and in real life!",
             "Camera's on, heart's fuller — RED has arrived!",
         ],
-        "gate_title": "Welcome, RED 💫",
+     "gate_title": "Welcome, RED 💫",
+"song_url": "https://youtu.be/UDHklYvDkv8",
         "cards": [
             {"title": "Why You Should Buy Me Chocolate", "emoji": "🍫",
              "type": "text", "stickers": CHOCOLATE_STICKERS,
@@ -153,6 +158,7 @@ PEOPLE = {
             "The co-conspirator of every game night has arrived!",
         ],
         "gate_title": "Welcome, Butterfly 🦋",
+"song_url": "https://youtu.be/AGsn2ycFRqI",
         "cards": [
             {"title": "Why You Should Buy Me Chocolate", "emoji": "🍫",
              "type": "text", "stickers": CHOCOLATE_STICKERS,
@@ -181,6 +187,7 @@ PEOPLE = {
             "The group chat's certified troublemaker has arrived!",
         ],
         "gate_title": "Welcome, Cupcakes 🧁",
+"song_url": "https://youtu.be/jmpUP1MaQ9Q",
         "cards": [
             {"title": "Why You Should Buy Me Chocolate", "emoji": "🍫",
              "type": "text", "stickers": CHOCOLATE_STICKERS,
@@ -203,6 +210,20 @@ PEOPLE = {
 
 # Reverse lookup: token -> slug
 TOKEN_TO_SLUG = {info["token"]: slug for slug, info in PEOPLE.items()}
+def to_embed_url(url):
+    """Turn a normal YouTube link into an embeddable one."""
+    if not url:
+        return None
+    if "embed/" in url:
+        return url
+    video_id = None
+    if "watch?v=" in url:
+        video_id = url.split("watch?v=")[1].split("&")[0]
+    elif "youtu.be/" in url:
+        video_id = url.split("youtu.be/")[1].split("?")[0]
+    if not video_id:
+        return None
+    return f"https://www.youtube.com/embed/{video_id}"
 
 # Public-safe menu info (name + emoji only — no personal content)
 MENU_ITEMS = [
@@ -231,11 +252,13 @@ def world(token):
     if not slug:
         return render_template("locked.html", reason="invalid")
 
-    person = PEOPLE[slug]
+   person = PEOPLE[slug]
+    song_embed_url = to_embed_url(person.get("song_url", ""))
     return render_template(
         "world.html",
         unlocked_slug=slug,
         person=person,
+        song_embed_url=song_embed_url,
         menu_items=MENU_ITEMS,
         love_stickers=LOVE_STICKERS,
         gatekeeper_lines=GATEKEEPER_LINES,
